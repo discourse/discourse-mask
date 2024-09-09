@@ -1,5 +1,3 @@
 en:
   theme_metadata:
     description: Allows to mask content not for current user
-    settings:
-      example_setting: A description of a setting.
