@@ -1,0 +1,10 @@
+.d-wrap[data-wrap="mask"] {
+  table tr td:last-child,
+  table tr th:last-child {
+    display: none;
+  }
+
+  .all-events-button {
+    margin-left: 0.5em;
+  }
+}

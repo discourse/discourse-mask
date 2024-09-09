@@ -1,5 +1,1 @@
-# discourse-mask
-
-**Theme Summary**
-
-For more information, please see: **url to meta topic**
+super experimental do not use
