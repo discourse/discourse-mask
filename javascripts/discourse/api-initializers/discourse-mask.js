@@ -1,7 +1,7 @@
 import { apiInitializer } from "discourse/lib/api";
 
 /*
- * This is a simple exmample of how too much power can be dangerous.
+ * This is a simple example of how too much power can be dangerous.
  */
 
 let showEverything = false;
