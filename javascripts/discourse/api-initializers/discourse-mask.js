@@ -6,7 +6,7 @@ import { apiInitializer } from "discourse/lib/api";
 
 let showEverything = false;
 
-const applyMask = (cooked, groupNames) => {
+const applyMask = (cooked, groupNames, currentUser) => {
   const table = cooked.querySelector("table");
 
   if (!table) {
@@ -21,8 +21,14 @@ const applyMask = (cooked, groupNames) => {
       return;
     }
 
-    const lastCell = row.querySelector("td:last-child").textContent;
+    const lastCell = row
+      .querySelector("td:last-child")
+      .textContent.toLowerCase();
     if (
+      !lastCell
+        .split(",")
+        .filter(Boolean)
+        .includes(currentUser.username_lower) &&
       lastCell !== "" &&
       lastCell !== "all" &&
       !groupNames.includes(lastCell)
@@ -35,7 +41,7 @@ const applyMask = (cooked, groupNames) => {
 const processMask = (currentUser, mask, groupNames) => {
   // prevents multiple runs
   if (mask.dataset.computed) {
-    applyMask(mask, groupNames);
+    applyMask(mask, groupNames, currentUser);
     return;
   }
 
@@ -44,7 +50,7 @@ const processMask = (currentUser, mask, groupNames) => {
   allButton.classList.add("btn", "btn-primary", "all-events-button");
   allButton.onclick = () => {
     showEverything = true;
-    applyMask(mask, groupNames);
+    applyMask(mask, groupNames, currentUser);
   };
   mask.insertAdjacentElement("afterbegin", allButton);
 
@@ -53,13 +59,13 @@ const processMask = (currentUser, mask, groupNames) => {
   mineButton.classList.add("btn", "btn-primary", "mine-events-button");
   mineButton.onclick = () => {
     showEverything = false;
-    applyMask(mask, groupNames);
+    applyMask(mask, groupNames, currentUser);
   };
   mask.insertAdjacentElement("afterbegin", mineButton);
 
   mask.dataset.computed = true;
 
-  applyMask(mask, groupNames);
+  applyMask(mask, groupNames, currentUser);
 };
 
 export default apiInitializer("1.8.0", (api) => {
