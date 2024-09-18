@@ -1,71 +1,24 @@
+import hbs from "htmlbars-inline-precompile";
 import { apiInitializer } from "discourse/lib/api";
 
 /*
  * This is a simple example of how too much power can be dangerous.
  */
 
-let showEverything = false;
-
-const applyMask = (cooked, groupNames, currentUser) => {
-  const table = cooked.querySelector("table");
-
-  if (!table) {
-    return;
-  }
-
-  const rows = table.querySelectorAll("tbody tr");
-
-  rows.forEach((row) => {
-    if (showEverything) {
-      row.classList.remove("hidden");
-      return;
-    }
-
-    const lastCell = row
-      .querySelector("td:last-child")
-      .textContent.toLowerCase();
-    if (
-      !lastCell
-        .split(",")
-        .filter(Boolean)
-        .includes(currentUser.username_lower) &&
-      lastCell !== "" &&
-      lastCell !== "all" &&
-      !groupNames.includes(lastCell)
-    ) {
-      row.classList.add("hidden");
-    }
-  });
-};
-
-const processMask = (currentUser, mask, groupNames) => {
+const processMask = (currentUser, mask, groupNames, helper) => {
   // prevents multiple runs
   if (mask.dataset.computed) {
-    applyMask(mask, groupNames, currentUser);
     return;
   }
 
-  const allButton = document.createElement("button");
-  allButton.textContent = "All events";
-  allButton.classList.add("btn", "btn-primary", "all-events-button");
-  allButton.onclick = () => {
-    showEverything = true;
-    applyMask(mask, groupNames, currentUser);
-  };
-  mask.insertAdjacentElement("afterbegin", allButton);
+  const div = document.createElement("div");
+  mask.insertAdjacentElement("afterbegin", div);
 
-  const mineButton = document.createElement("button");
-  mineButton.textContent = "My events";
-  mineButton.classList.add("btn", "btn-primary", "mine-events-button");
-  mineButton.onclick = () => {
-    showEverything = false;
-    applyMask(mask, groupNames, currentUser);
-  };
-  mask.insertAdjacentElement("afterbegin", mineButton);
+  helper.renderGlimmer(div, hbs`<ToggleMask @mask={{@data.mask}} />`, {
+    mask,
+  });
 
   mask.dataset.computed = true;
-
-  applyMask(mask, groupNames, currentUser);
 };
 
 export default apiInitializer("1.8.0", (api) => {
@@ -87,7 +40,7 @@ export default apiInitializer("1.8.0", (api) => {
     const groupNames = currentUser.groups.map((group) => group.name);
 
     masks.forEach((mask) => {
-      processMask(currentUser, mask, groupNames);
+      processMask(currentUser, mask, groupNames, helper);
     });
   });
 });

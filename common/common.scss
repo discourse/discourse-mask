@@ -4,7 +4,26 @@
     display: none;
   }
 
+  th:first-child,
+  td:first-child {
+    width: 90px;
+    font-size: var(--font-down-1);
+  }
+
+  th,
+  td {
+    vertical-align: top;
+  }
+
   .all-events-button {
     margin-left: 0.5em;
+  }
+}
+
+.my-activityes-toggle {
+  display: flex;
+
+  .d-toggle-switch {
+    margin-right: 0.5em;
   }
 }
