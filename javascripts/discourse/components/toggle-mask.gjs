@@ -37,6 +37,7 @@ export default class ToggleMask extends Component {
       });
     }
 
+    // eslint-disable-next-line no-console
     console.error("[discourse-mask]: This mask does not exist, check your MD");
   }
 
