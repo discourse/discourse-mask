@@ -7,11 +7,9 @@ import { service } from "@ember/service";
 import DToggleSwitch from "discourse/components/d-toggle-switch";
 
 export default class ToggleMask extends Component {
-  @service currentUser;
-
+  @service masker;
   @tracked showMyActivities = true;
-
-  groupNames = this.currentUser.groups.map((group) => group.name);
+  @tracked displayText = "";
 
   @action
   handleToggle() {
@@ -22,34 +20,24 @@ export default class ToggleMask extends Component {
   @action
   applyMask() {
     const table = this.args.mask.querySelector("table");
-
-    if (!table) {
-      return;
+    if (table) {
+      this.displayText = "Show only my activities";
+      return this.masker.toggleTable({
+        table,
+        shouldShowActivities: this.showMyActivities,
+      });
     }
 
-    const rows = table.querySelectorAll("tbody tr");
+    const checklist = this.args.mask.querySelector("ul"); // maybe there is a better way to get checklists
+    if (checklist) {
+      this.displayText = "Show what is left to be done";
+      return this.masker.toggleChecklist({
+        checklist,
+        shouldShowAllTodos: this.showMyActivities,
+      });
+    }
 
-    rows.forEach((row) => {
-      if (!this.showMyActivities) {
-        row.classList.remove("hidden");
-        return;
-      }
-
-      const lastCell = row
-        .querySelector("td:last-child")
-        .textContent.toLowerCase();
-      if (
-        !lastCell
-          .split(",")
-          .filter(Boolean)
-          .includes(this.currentUser.username_lower) &&
-        lastCell !== "" &&
-        lastCell !== "all" &&
-        !this.groupNames.includes(lastCell)
-      ) {
-        row.classList.add("hidden");
-      }
-    });
+    console.error("[discourse-mask]: This mask does not exist, check your MD");
   }
 
   <template>
@@ -59,7 +47,7 @@ export default class ToggleMask extends Component {
         {{on "click" this.handleToggle}}
         {{didInsert this.applyMask}}
       />
-      <span>Show only my activities</span>
+      <span>{{this.displayText}}</span>
     </div>
   </template>
 }
