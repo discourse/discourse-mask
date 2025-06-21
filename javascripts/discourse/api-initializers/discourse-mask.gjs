@@ -1,5 +1,5 @@
-import hbs from "htmlbars-inline-precompile";
 import { apiInitializer } from "discourse/lib/api";
+import ToggleMask from "../components/toggle-mask";
 
 /*
  * This is a simple example of how too much power can be dangerous.
@@ -14,9 +14,13 @@ const processMask = (currentUser, mask, groupNames, helper) => {
   const div = document.createElement("div");
   mask.insertAdjacentElement("afterbegin", div);
 
-  helper.renderGlimmer(div, hbs`<ToggleMask @mask={{@data.mask}} />`, {
-    mask,
-  });
+  helper.renderGlimmer(
+    div,
+    <template><ToggleMask @mask={{@data.mask}} /></template>,
+    {
+      mask,
+    }
+  );
 
   mask.dataset.computed = true;
 };
