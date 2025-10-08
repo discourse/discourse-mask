@@ -25,7 +25,7 @@ const processMask = (currentUser, mask, groupNames, helper) => {
   mask.dataset.computed = true;
 };
 
-export default apiInitializer("1.8.0", (api) => {
+export default apiInitializer((api) => {
   api.decorateCookedElement((cooked, helper) => {
     if (!helper) {
       return;
